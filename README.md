@@ -4,6 +4,10 @@ A modern Neovim plugin for creating presentations from markdown files.
 Inspired by the original vimdeck, rewritten from scratch using Treesitter
 and native Neovim features.
 
+![ASCII art title slide](screenshots/neovim-deck-1.png)
+
+![Navigation slide](screenshots/neovim-deck-4.png)
+
 ## Features
 
 - Treesitter-based markdown parsing (no external dependencies)
@@ -201,17 +205,13 @@ This plugin:
 <details>
 <summary>Click to view screenshots</summary>
 
-### ASCII Art Headers
-![ASCII art title slide](screenshots/neovim-deck-1.png)
+
 
 ### Code Examples
 ![Code block slide](screenshots/neovim-deck-2.png)
 
 ### Lists and Formatting
 ![Lists slide](screenshots/neovim-deck-3.png)
-
-### Navigation Info
-![Navigation slide](screenshots/neovim-deck-4.png)
 
 ### Final Slide
 ![Thank you slide](screenshots/neovim-deck-5.png)
