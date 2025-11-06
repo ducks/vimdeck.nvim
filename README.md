@@ -196,6 +196,28 @@ This plugin:
 - Supports all markdown heading levels
 - Faster and more integrated with Neovim
 
+## Screenshots
+
+<details>
+<summary>Click to view screenshots</summary>
+
+### ASCII Art Headers
+![ASCII art title slide](screenshots/neovim-deck-1.png)
+
+### Code Examples
+![Code block slide](screenshots/neovim-deck-2.png)
+
+### Lists and Formatting
+![Lists slide](screenshots/neovim-deck-3.png)
+
+### Navigation Info
+![Navigation slide](screenshots/neovim-deck-4.png)
+
+### Final Slide
+![Thank you slide](screenshots/neovim-deck-5.png)
+
+</details>
+
 ## Examples
 
 See `example.md` for a sample presentation.
