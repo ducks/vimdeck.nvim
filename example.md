@@ -2,6 +2,7 @@
 wrap: 100
 center_horizontal: true
 margin: 3
+header_style: box
 ---
 
 # Welcome to vimdeck.nvim

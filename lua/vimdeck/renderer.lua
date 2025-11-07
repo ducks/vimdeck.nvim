@@ -62,6 +62,43 @@ function M.render_element(element, opts)
   end
 end
 
+-- Apply header style decoration
+function M.apply_header_style(text, style, level)
+  local lines = {}
+  local width = vim.fn.strdisplaywidth(text)
+
+  if style == "underline" then
+    local char = level == 1 and "═" or (level == 2 and "─" or "")
+    table.insert(lines, text)
+    if char ~= "" then
+      table.insert(lines, string.rep(char, width))
+    end
+  elseif style == "box" then
+    local top = "┌" .. string.rep("─", width + 2) .. "┐"
+    local mid = "│ " .. text .. " │"
+    local bot = "└" .. string.rep("─", width + 2) .. "┘"
+    table.insert(lines, top)
+    table.insert(lines, mid)
+    table.insert(lines, bot)
+  elseif style == "double" then
+    local top = "╔" .. string.rep("═", width + 2) .. "╗"
+    local mid = "║ " .. text .. " ║"
+    local bot = "╚" .. string.rep("═", width + 2) .. "╝"
+    table.insert(lines, top)
+    table.insert(lines, mid)
+    table.insert(lines, bot)
+  elseif style == "dashed" then
+    local char = level == 1 and "┄" or "┈"
+    table.insert(lines, text)
+    table.insert(lines, string.rep(char, width))
+  else
+    -- No style, just plain text
+    table.insert(lines, text)
+  end
+
+  return lines
+end
+
 -- Render heading (with optional figlet for h1/h2)
 function M.render_heading(element, opts)
   local text = element.text:gsub("^#+%s+", "") -- Strip markdown markers
@@ -86,15 +123,29 @@ function M.render_heading(element, opts)
     end
   end
 
-  -- Fallback: plain text with highlight
-  local prefix = string.rep("#", element.level) .. " "
-  table.insert(lines, prefix .. text)
-  table.insert(highlights, {
-    group = "Title",
-    line = 0,
-    col_start = 0,
-    col_end = -1
-  })
+  -- Apply header style if configured
+  if opts.header_style and opts.header_style ~= "none" then
+    lines = M.apply_header_style(text, opts.header_style, element.level)
+    -- Highlight all lines
+    for i = 1, #lines do
+      table.insert(highlights, {
+        group = element.level <= 2 and "Title" or "Statement",
+        line = i - 1,
+        col_start = 0,
+        col_end = -1
+      })
+    end
+  else
+    -- Fallback: plain text with highlight
+    local prefix = string.rep("#", element.level) .. " "
+    table.insert(lines, prefix .. text)
+    table.insert(highlights, {
+      group = "Title",
+      line = 0,
+      col_start = 0,
+      col_end = -1
+    })
+  end
 
   return lines, highlights
 end
