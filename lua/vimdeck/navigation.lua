@@ -65,6 +65,7 @@ function M.show_slide(slide_num)
     center_horizontal = M.config.center_horizontal,
     margin = M.config.margin,
     wrap = M.config.wrap,
+    header_style = M.config.header_style,
   })
 
   -- Flatten any lines that contain embedded newlines and track line mapping

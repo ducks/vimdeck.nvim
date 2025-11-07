@@ -218,6 +218,12 @@ Frontmatter must be at the very beginning of the file, enclosed by `---` delimit
 ### Available Options
 
 - `use_figlet` (boolean): Use figlet for ASCII art headers (h1 and h2)
+- `header_style` (string): Header decoration style when figlet is disabled
+  - `"underline"` - Single/double line underlines (h1 uses ═, h2 uses ─)
+  - `"box"` - Simple box with ┌─┐ characters
+  - `"double"` - Double-line box with ╔═╗ characters
+  - `"dashed"` - Dashed underlines (h1 uses ┄, h2 uses ┈)
+  - `nil` - Plain text (default)
 - `center_vertical` (boolean): Center slides vertically in the window
 - `center_horizontal` (boolean): Center content horizontally in the window
 - `margin` (number): Horizontal margin in columns, applies even when not centering
