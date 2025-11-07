@@ -7,6 +7,7 @@ function M.render_slide(slide, opts)
   opts.use_figlet = opts.use_figlet ~= false -- default true
   opts.center_vertical = opts.center_vertical ~= false -- default true
   opts.center_horizontal = opts.center_horizontal ~= false -- default true
+  opts.margin = opts.margin or 2 -- default 2 columns margin
 
   local lines = {}
   local highlights = {}
@@ -38,7 +39,7 @@ function M.render_slide(slide, opts)
 
   -- Center content if requested
   if opts.center_vertical or opts.center_horizontal then
-    lines = M.center_content(lines, opts.height or 40, opts.width, opts.center_vertical, opts.center_horizontal)
+    lines = M.center_content(lines, opts.height or 40, opts.width, opts.center_vertical, opts.center_horizontal, opts.margin)
   end
 
   return lines, highlights
@@ -148,7 +149,9 @@ end
 
 -- Render paragraph
 function M.render_paragraph(element, opts)
-  return { element.text }, {}
+  -- Split paragraph into lines for proper centering
+  local lines = vim.split(element.text, "\n", { plain = true })
+  return lines, {}
 end
 
 -- Generate ASCII art using figlet
@@ -170,8 +173,9 @@ function M.figlet(text, level)
 end
 
 -- Center content vertically and/or horizontally
-function M.center_content(lines, height, width, center_vertical, center_horizontal)
+function M.center_content(lines, height, width, center_vertical, center_horizontal, margin)
   width = width or vim.o.columns
+  margin = margin or 0
   local result = lines
 
   -- Horizontal centering: find max line width and pad each line
@@ -187,6 +191,11 @@ function M.center_content(lines, height, width, center_vertical, center_horizont
     local horizontally_centered = {}
     local left_padding = math.floor((width - max_width) / 2)
 
+    -- Ensure at least margin padding
+    if left_padding < margin then
+      left_padding = margin
+    end
+
     if left_padding > 0 then
       local padding_str = string.rep(" ", left_padding)
       for _, line in ipairs(result) do
@@ -194,6 +203,14 @@ function M.center_content(lines, height, width, center_vertical, center_horizont
       end
       result = horizontally_centered
     end
+  elseif margin > 0 then
+    -- Apply margin even when not centering
+    local margin_str = string.rep(" ", margin)
+    local margined = {}
+    for _, line in ipairs(result) do
+      table.insert(margined, margin_str .. line)
+    end
+    result = margined
   end
 
   -- Vertical centering
