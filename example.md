@@ -1,3 +1,9 @@
+---
+wrap: 100
+center_horizontal: true
+margin: 3
+---
+
 # Welcome to vimdeck.nvim
 
 A modern Neovim presentation tool

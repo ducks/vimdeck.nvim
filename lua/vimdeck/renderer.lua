@@ -147,10 +147,54 @@ function M.render_quote(element, opts)
   return lines, highlights
 end
 
+-- Wrap text to specified width
+function M.wrap_text(text, width)
+  if not width or width <= 0 then
+    return text
+  end
+
+  local wrapped_lines = {}
+  local current_line = ""
+
+  for word in text:gmatch("%S+") do
+    local test_line = current_line == "" and word or (current_line .. " " .. word)
+
+    if vim.fn.strdisplaywidth(test_line) <= width then
+      current_line = test_line
+    else
+      if current_line ~= "" then
+        table.insert(wrapped_lines, current_line)
+      end
+      current_line = word
+    end
+  end
+
+  if current_line ~= "" then
+    table.insert(wrapped_lines, current_line)
+  end
+
+  return wrapped_lines
+end
+
 -- Render paragraph
 function M.render_paragraph(element, opts)
-  -- Split paragraph into lines for proper centering
-  local lines = vim.split(element.text, "\n", { plain = true })
+  local lines = {}
+
+  -- Split by existing newlines first
+  local raw_lines = vim.split(element.text, "\n", { plain = true })
+
+  -- Apply wrapping if configured
+  if opts.wrap and opts.wrap > 0 then
+    for _, line in ipairs(raw_lines) do
+      local wrapped = M.wrap_text(line, opts.wrap)
+      for _, wrapped_line in ipairs(wrapped) do
+        table.insert(lines, wrapped_line)
+      end
+    end
+  else
+    lines = raw_lines
+  end
+
   return lines, {}
 end
 
