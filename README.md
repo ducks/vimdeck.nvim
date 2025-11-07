@@ -6,7 +6,7 @@ and native Neovim features.
 
 ![ASCII art title slide](screenshots/neovim-deck-1.png)
 
-![Navigation slide](screenshots/neovim-deck-4.png)
+![Prose slide with centered text](screenshots/neovim-deck-prose.png)
 
 ## Features
 
@@ -177,6 +177,8 @@ end
 > This is a quote
 > It spans multiple lines
 ```
+
+![Lists and blockquotes slide](screenshots/neovim-deck-heading.png)
 
 ## Configuration
 
