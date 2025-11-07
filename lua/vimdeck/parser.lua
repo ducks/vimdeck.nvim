@@ -3,7 +3,9 @@ local M = {}
 -- Parse markdown buffer into slides using Treesitter
 -- Slides are separated by horizontal rules (---, ***, ___)
 -- Returns array of slide tables with structured content
-function M.parse_slides(bufnr)
+function M.parse_slides(bufnr, start_line)
+  start_line = start_line or 0
+
   -- Get the markdown parser
   local ok, parser = pcall(vim.treesitter.get_parser, bufnr, 'markdown')
   if not ok then
@@ -31,6 +33,12 @@ function M.parse_slides(bufnr)
   for id, node in query:iter_captures(root, bufnr, 0, -1) do
     local capture = query.captures[id]
     local start_row, start_col, end_row, end_col = node:range()
+
+    -- Skip nodes before start_line (frontmatter region)
+    if start_row < start_line then
+      goto continue
+    end
+
     local text = vim.treesitter.get_node_text(node, bufnr)
 
     if capture == 'separator' then
@@ -80,8 +88,9 @@ function M.parse_slides(bufnr)
       end
 
       table.insert(current_slide.elements, element)
-      ::continue::
     end
+
+    ::continue::
   end
 
   -- Add final slide

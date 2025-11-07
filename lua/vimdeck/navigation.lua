@@ -5,12 +5,14 @@ M.current_slide = 1
 M.slides = {}
 M.bufnr = nil
 M.ns_id = nil
+M.config = nil
 
 -- Setup navigation for a presentation
-function M.setup(slides, bufnr, ns_id)
+function M.setup(slides, bufnr, ns_id, config)
   M.slides = slides
   M.bufnr = bufnr
   M.ns_id = ns_id
+  M.config = config or require('vimdeck').config
   M.current_slide = 1
 
   -- Setup keymaps
@@ -48,7 +50,6 @@ function M.show_slide(slide_num)
   M.current_slide = slide_num
 
   local renderer = require('vimdeck.renderer')
-  local config = require('vimdeck').config
   local slide = M.slides[slide_num]
 
   -- Get window dimensions for centering
@@ -59,10 +60,11 @@ function M.show_slide(slide_num)
   local lines, highlights = renderer.render_slide(slide, {
     height = win_height,
     width = win_width,
-    use_figlet = config.use_figlet,
-    center_vertical = config.center_vertical,
-    center_horizontal = config.center_horizontal,
-    margin = config.margin,
+    use_figlet = M.config.use_figlet,
+    center_vertical = M.config.center_vertical,
+    center_horizontal = M.config.center_horizontal,
+    margin = M.config.margin,
+    wrap = M.config.wrap,
   })
 
   -- Flatten any lines that contain embedded newlines and track line mapping

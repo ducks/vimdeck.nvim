@@ -180,28 +180,48 @@ end
 
 ## Configuration
 
-```lua
-require('vimdeck').setup({
-  # Use figlet for ASCII art headers (default: true)
-  use_figlet = true,
+### Global Configuration
 
-  # Center slides vertically (default: true)
-  center_vertical = true,
-
-  # Center slides horizontally (default: true)
-  center_horizontal = true,
-})
-```
-
-You can disable centering if you prefer left-aligned or top-aligned content:
+Set global defaults in your Neovim config:
 
 ```lua
 require('vimdeck').setup({
-  use_figlet = true,
-  center_vertical = false,    # Slides start at top
-  center_horizontal = false,  # Content is left-aligned
+  use_figlet = true,           # Use figlet for ASCII art headers (default: true)
+  center_vertical = true,      # Center slides vertically (default: true)
+  center_horizontal = true,    # Center slides horizontally (default: true)
+  margin = 2,                  # Horizontal margin in columns (default: 2)
+  wrap = nil,                  # Text wrapping width, nil = no wrapping (default: nil)
 })
 ```
+
+### Per-Presentation Configuration
+
+Override settings for individual presentations using YAML frontmatter:
+
+```markdown
+---
+wrap: 80
+center_horizontal: true
+center_vertical: false
+margin: 3
+use_figlet: false
+---
+
+# First Slide
+
+This presentation will wrap text at 80 characters, center horizontally,
+start at the top, use 3-column margins, and skip ASCII art headers.
+```
+
+Frontmatter must be at the very beginning of the file, enclosed by `---` delimiters.
+
+### Available Options
+
+- `use_figlet` (boolean): Use figlet for ASCII art headers (h1 and h2)
+- `center_vertical` (boolean): Center slides vertically in the window
+- `center_horizontal` (boolean): Center content horizontally in the window
+- `margin` (number): Horizontal margin in columns, applies even when not centering
+- `wrap` (number): Wrap long lines at specified character width (useful for prose)
 
 ## Differences from Original vimdeck
 

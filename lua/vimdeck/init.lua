@@ -23,9 +23,14 @@ function M.present()
     return
   end
 
-  -- Parse slides
+  -- Extract frontmatter and merge with global config
+  local frontmatter = require('vimdeck.frontmatter')
+  local fm_config, content_start = frontmatter.extract_frontmatter(source_bufnr)
+  local presentation_config = vim.tbl_deep_extend('force', M.config, fm_config)
+
+  -- Parse slides (skip frontmatter region)
   local parser = require('vimdeck.parser')
-  local slides = parser.parse_slides(source_bufnr)
+  local slides = parser.parse_slides(source_bufnr, content_start)
 
   if #slides == 0 then
     vim.notify("vimdeck: No slides found. Separate slides with horizontal rules (---)", vim.log.levels.WARN)
@@ -62,9 +67,9 @@ function M.present()
   -- Setup custom statusline
   vim.opt_local.statusline = '%{get(b:, "vimdeck_status", "Vimdeck")}'
 
-  -- Setup navigation
+  -- Setup navigation with merged config
   local navigation = require('vimdeck.navigation')
-  navigation.setup(slides, pres_bufnr, ns_id)
+  navigation.setup(slides, pres_bufnr, ns_id, presentation_config)
 end
 
 -- Convenience function to present a file
