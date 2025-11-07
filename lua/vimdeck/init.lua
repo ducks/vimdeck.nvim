@@ -56,6 +56,7 @@ function M.present()
   vim.opt_local.cursorline = false
   vim.opt_local.signcolumn = 'no'
   vim.opt_local.foldcolumn = '0'
+  vim.opt_local.colorcolumn = ''
 
   -- Setup custom statusline
   vim.opt_local.statusline = '%{get(b:, "vimdeck_status", "Vimdeck")}'
