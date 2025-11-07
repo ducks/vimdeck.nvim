@@ -34,7 +34,8 @@ and native Neovim features.
   cmd = { 'Vimdeck', 'VimdeckFile' },
   opts = {
     use_figlet = true,
-    center_slides = true,
+    center_vertical = true,
+    center_horizontal = true,
   }
 }
 ```
@@ -47,7 +48,8 @@ use {
   config = function()
     require('vimdeck').setup({
       use_figlet = true,
-      center_slides = true,
+      center_vertical = true,
+      center_horizontal = true,
     })
   end
 }
@@ -184,7 +186,20 @@ require('vimdeck').setup({
   use_figlet = true,
 
   # Center slides vertically (default: true)
-  center_slides = true,
+  center_vertical = true,
+
+  # Center slides horizontally (default: true)
+  center_horizontal = true,
+})
+```
+
+You can disable centering if you prefer left-aligned or top-aligned content:
+
+```lua
+require('vimdeck').setup({
+  use_figlet = true,
+  center_vertical = false,    # Slides start at top
+  center_horizontal = false,  # Content is left-aligned
 })
 ```
 
