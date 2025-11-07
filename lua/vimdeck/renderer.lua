@@ -5,7 +5,8 @@ local M = {}
 function M.render_slide(slide, opts)
   opts = opts or {}
   opts.use_figlet = opts.use_figlet ~= false -- default true
-  opts.center = opts.center ~= false -- default true
+  opts.center_vertical = opts.center_vertical ~= false -- default true
+  opts.center_horizontal = opts.center_horizontal ~= false -- default true
 
   local lines = {}
   local highlights = {}
@@ -35,9 +36,9 @@ function M.render_slide(slide, opts)
     table.insert(lines, "")
   end
 
-  -- Center content vertically if requested
-  if opts.center then
-    lines = M.center_content(lines, opts.height or 40)
+  -- Center content if requested
+  if opts.center_vertical or opts.center_horizontal then
+    lines = M.center_content(lines, opts.height or 40, opts.width, opts.center_vertical, opts.center_horizontal)
   end
 
   return lines, highlights
@@ -102,48 +103,15 @@ function M.render_code(element, opts)
   local lines = vim.split(element.text, "\n")
   local highlights = {}
 
-  -- Try to use Treesitter for syntax highlighting
-  local lang = element.lang or "text"
-  local ok, parser = pcall(vim.treesitter.get_string_parser, element.text, lang)
-
-  if ok then
-    local tree = parser:parse()[1]
-    if tree then
-      local root = tree:root()
-
-      -- Get highlights for this language
-      local ok_query, query = pcall(vim.treesitter.query.get, lang, 'highlights')
-
-      if ok_query and query then
-        for id, node in query:iter_captures(root, element.text, 0, -1) do
-          local capture = query.captures[id]
-          local hl_group = "@" .. capture .. "." .. lang
-          local start_row, start_col, end_row, end_col = node:range()
-
-          -- Add highlight for each line this node spans
-          for line_num = start_row, end_row do
-            table.insert(highlights, {
-              group = hl_group,
-              line = line_num,
-              col_start = (line_num == start_row) and start_col or 0,
-              col_end = (line_num == end_row) and end_col or -1
-            })
-          end
-        end
-      end
-    end
-  end
-
-  -- Fallback: basic string highlight if Treesitter fails
-  if #highlights == 0 then
-    for i = 1, #lines do
-      table.insert(highlights, {
-        group = "String",
-        line = i - 1,
-        col_start = 0,
-        col_end = -1
-      })
-    end
+  -- Simple highlighting: use Identifier for visual distinction
+  -- More complex Treesitter highlighting is tricky with dynamic buffers
+  for i = 1, #lines do
+    table.insert(highlights, {
+      group = "Identifier",
+      line = i - 1,
+      col_start = 0,
+      col_end = -1
+    })
   end
 
   return lines, highlights
@@ -201,28 +169,56 @@ function M.figlet(text, level)
   return vim.split(result, "\n")
 end
 
--- Center content vertically
-function M.center_content(lines, height)
-  local content_height = #lines
-  local padding = math.floor((height - content_height) / 2)
+-- Center content vertically and/or horizontally
+function M.center_content(lines, height, width, center_vertical, center_horizontal)
+  width = width or vim.o.columns
+  local result = lines
 
-  if padding <= 0 then
-    return lines
+  -- Horizontal centering: find max line width and pad each line
+  if center_horizontal then
+    local max_width = 0
+    for _, line in ipairs(result) do
+      local line_width = vim.fn.strdisplaywidth(line)
+      if line_width > max_width then
+        max_width = line_width
+      end
+    end
+
+    local horizontally_centered = {}
+    local left_padding = math.floor((width - max_width) / 2)
+
+    if left_padding > 0 then
+      local padding_str = string.rep(" ", left_padding)
+      for _, line in ipairs(result) do
+        table.insert(horizontally_centered, padding_str .. line)
+      end
+      result = horizontally_centered
+    end
   end
 
-  local centered = {}
+  -- Vertical centering
+  if center_vertical then
+    local content_height = #result
+    local top_padding = math.floor((height - content_height) / 2)
 
-  -- Add top padding
-  for _ = 1, padding do
-    table.insert(centered, "")
+    if top_padding > 0 then
+      local vertically_centered = {}
+
+      -- Add top padding
+      for _ = 1, top_padding do
+        table.insert(vertically_centered, "")
+      end
+
+      -- Add content
+      for _, line in ipairs(result) do
+        table.insert(vertically_centered, line)
+      end
+
+      result = vertically_centered
+    end
   end
 
-  -- Add content
-  for _, line in ipairs(lines) do
-    table.insert(centered, line)
-  end
-
-  return centered
+  return result
 end
 
 -- Apply highlights to buffer

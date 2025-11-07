@@ -48,17 +48,29 @@ function M.show_slide(slide_num)
   M.current_slide = slide_num
 
   local renderer = require('vimdeck.renderer')
+  local config = require('vimdeck').config
   local slide = M.slides[slide_num]
 
-  -- Get window height for centering
+  -- Get window dimensions for centering
   local win_height = vim.api.nvim_win_get_height(0)
+  local win_width = vim.api.nvim_win_get_width(0)
 
-  -- Render slide
-  local lines, highlights = renderer.render_slide(slide, { height = win_height })
+  -- Render slide with user config
+  local lines, highlights = renderer.render_slide(slide, {
+    height = win_height,
+    width = win_width,
+    use_figlet = config.use_figlet,
+    center_vertical = config.center_vertical,
+    center_horizontal = config.center_horizontal,
+  })
 
-  -- Flatten any lines that contain embedded newlines
+  -- Flatten any lines that contain embedded newlines and track line mapping
   local flattened_lines = {}
-  for _, line in ipairs(lines) do
+  local line_mapping = {} -- old line -> new line (0-indexed)
+
+  for old_line_idx, line in ipairs(lines) do
+    line_mapping[old_line_idx - 1] = #flattened_lines -- 0-indexed
+
     if line:find("\n") then
       -- Split lines with embedded newlines
       for subline in line:gmatch("[^\n]+") do
@@ -66,6 +78,20 @@ function M.show_slide(slide_num)
       end
     else
       table.insert(flattened_lines, line)
+    end
+  end
+
+  -- Adjust highlight line numbers based on mapping
+  local adjusted_highlights = {}
+  for _, hl in ipairs(highlights) do
+    local new_line = line_mapping[hl.line]
+    if new_line then
+      table.insert(adjusted_highlights, {
+        group = hl.group,
+        line = new_line,
+        col_start = hl.col_start,
+        col_end = hl.col_end
+      })
     end
   end
 
@@ -77,8 +103,8 @@ function M.show_slide(slide_num)
   -- Clear old highlights
   vim.api.nvim_buf_clear_namespace(M.bufnr, M.ns_id, 0, -1)
 
-  -- Apply new highlights
-  renderer.apply_highlights(M.bufnr, highlights, M.ns_id)
+  -- Apply new highlights with adjusted line numbers
+  renderer.apply_highlights(M.bufnr, adjusted_highlights, M.ns_id)
 
   -- Update status line with slide number
   M.update_statusline()

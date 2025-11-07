@@ -2,7 +2,8 @@ local M = {}
 
 M.config = {
   use_figlet = true,
-  center_slides = true,
+  center_vertical = true,
+  center_horizontal = true,
 }
 
 -- Setup the plugin with user config
