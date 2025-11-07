@@ -62,6 +62,7 @@ function M.show_slide(slide_num)
     use_figlet = config.use_figlet,
     center_vertical = config.center_vertical,
     center_horizontal = config.center_horizontal,
+    margin = config.margin,
   })
 
   -- Flatten any lines that contain embedded newlines and track line mapping

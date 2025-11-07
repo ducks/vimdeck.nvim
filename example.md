@@ -13,6 +13,12 @@ A modern Neovim presentation tool
 
 ---
 
+## Prose
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut facilisis non augue vitae consectetur. Nulla sagittis at urna ut rutrum. Maecenas aliquam nibh a est porta ultricies. Vivamus sit amet orci ac risus interdum porttitor sit amet vel justo. Aenean id turpis et nunc rutrum convallis. Integer ipsum mi, accumsan non cursus non, porta vehicula velit. Vivamus non ultricies orci, at vestibulum sapien. Ut quam orci, aliquet ullamcorper commodo eu, lacinia sed arcu. Curabitur tempus eros quam, eu tincidunt tellus luctus ut. Sed scelerisque vitae erat in egestas. Donec a tortor tincidunt, accumsan nisi non, dapibus neque. Morbi ligula dui, consequat sit amet vulputate sed, bibendum eget leo.
+
+---
+
 ## Code Example
 
 Here's some Lua code:

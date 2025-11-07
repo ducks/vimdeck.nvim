@@ -4,6 +4,7 @@ M.config = {
   use_figlet = true,
   center_vertical = true,
   center_horizontal = true,
+  margin = 2, -- horizontal margin (columns) on each side
 }
 
 -- Setup the plugin with user config
